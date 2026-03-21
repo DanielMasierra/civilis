@@ -1,0 +1,127 @@
+version: "3.9"
+
+# ============================================================
+# LexJal — Infraestructura Docker Compose
+# Servicios: API, PostgreSQL, Redis, ChromaDB, Nginx
+# ============================================================
+
+services:
+
+  # ─── API Principal (FastAPI) ────────────────────────────────────────────────
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: lexjal_api
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - ./legal_docs:/app/legal_docs:ro    # Documentos legales (solo lectura)
+      - ./logs:/app/logs                    # Logs persistentes
+    ports:
+      - "8080:8080"    # Solo expuesto internamente; Nginx hace el proxy
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      chromadb:
+        condition: service_started
+    networks:
+      - lexjal_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ─── MCP Server (stdio, para Claude.ai) ────────────────────────────────────
+  # Este servicio se ejecuta bajo demanda como proceso stdio.
+  # Para producción con HTTP: usa el endpoint /mcp del API principal.
+  # Para Claude.ai desktop: ejecuta directamente con:
+  #   python -m backend.mcp.server
+  # (no se levanta como servicio Docker — es un proceso stdio)
+
+  # ─── PostgreSQL ─────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: lexjal_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-lexjal}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-lexjal}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - lexjal_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-lexjal}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─── Redis (rate limiting y sesiones) ───────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: lexjal_redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    networks:
+      - lexjal_net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # ─── ChromaDB (vector store RAG) ────────────────────────────────────────────
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: lexjal_chromadb
+    restart: unless-stopped
+    environment:
+      ANONYMIZED_TELEMETRY: "False"
+      CHROMA_SERVER_AUTH_CREDENTIALS_PROVIDER: ""
+    volumes:
+      - chroma_data:/chroma/chroma
+    networks:
+      - lexjal_net
+
+  # ─── Nginx (proxy reverso + SSL) ────────────────────────────────────────────
+  nginx:
+    image: nginx:alpine
+    container_name: lexjal_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro          # Certificados SSL
+      - certbot_www:/var/www/certbot:ro         # Para renovación Certbot
+    depends_on:
+      - api
+    networks:
+      - lexjal_net
+
+
+# ─── Volúmenes persistentes ────────────────────────────────────────────────────
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  chroma_data:
+    driver: local
+  certbot_www:
+    driver: local
+
+
+# ─── Red interna ───────────────────────────────────────────────────────────────
+networks:
+  lexjal_net:
+    driver: bridge

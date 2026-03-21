@@ -1,0 +1,48 @@
+# Core
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+python-dotenv==1.0.1
+pydantic==2.9.2
+pydantic-settings==2.5.2
+
+# Anthropic + LangChain
+anthropic==0.40.0
+langchain==0.3.7
+langchain-anthropic==0.3.0
+langchain-chroma==0.1.4
+langchain-community==0.3.7
+
+# Base de datos
+sqlalchemy==2.0.36
+asyncpg==0.30.0
+alembic==1.13.3
+psycopg2-binary==2.9.10
+
+# Redis (rate limiting)
+redis==5.2.0
+aioredis==2.0.1
+
+# Auth / JWT
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.12
+
+# Procesamiento de documentos legales
+pypdf==5.1.0
+unstructured==0.16.7
+
+# HTTP
+httpx==0.27.2
+
+# MCP server
+mcp==1.1.0
+
+# Embeddings (usa el modelo local para ahorrar costos)
+sentence-transformers==3.3.1
+
+# Stripe (fase 3)
+stripe==11.2.0
+
+# Utilidades
+python-slugify==8.0.4
+loguru==0.7.2

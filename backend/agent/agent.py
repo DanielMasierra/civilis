@@ -1,5 +1,5 @@
 """
-LexJal — Agente principal
+Civilis — Agente principal
 Orquesta el flujo: consulta → RAG → Claude → respuesta citada.
 """
 import time
@@ -16,7 +16,7 @@ from backend.agent.rag import get_rag
 settings = get_settings()
 
 
-class LexJalAgent:
+class CivilisAgent:
     """
     Agente de orientación jurídica civil.
 
@@ -144,11 +144,11 @@ class LexJalAgent:
 
 
 # Singleton global
-_agent_instance: Optional[LexJalAgent] = None
+_agent_instance: Optional[CivilisAgent] = None
 
 
-def get_agent() -> LexJalAgent:
+def get_agent() -> CivilisAgent:
     global _agent_instance
     if _agent_instance is None:
-        _agent_instance = LexJalAgent()
+        _agent_instance = CivilisAgent()
     return _agent_instance

@@ -1,5 +1,5 @@
 """
-LexJal — Schemas Pydantic
+Civilis — Schemas Pydantic
 Define los modelos de entrada y salida de la API REST.
 """
 from typing import Optional

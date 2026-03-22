@@ -1,5 +1,5 @@
 """
-LexJal — Aplicación principal FastAPI
+Civilis — Aplicación principal FastAPI
 Punto de entrada del backend. Registra routers, middleware y eventos.
 """
 from contextlib import asynccontextmanager
@@ -20,7 +20,7 @@ settings = get_settings()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Eventos de inicio y cierre de la aplicación."""
-    logger.info("🚀 Iniciando LexJal API...")
+    logger.info("🚀 Iniciando Civilis API...")
 
     # Crear tablas en la base de datos
     try:
@@ -38,14 +38,14 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.warning(f"No se pudo pre-cargar embeddings: {e}")
 
-    logger.info("✅ LexJal API lista para recibir consultas")
+    logger.info("✅ Civilis API lista para recibir consultas")
     yield
 
-    logger.info("👋 Cerrando LexJal API...")
+    logger.info("👋 Cerrando Civilis API...")
 
 
 app = FastAPI(
-    title="LexJal API",
+    title="Civilis API",
     description=(
         "Agente de orientación jurídica civil para Jalisco y México. "
         "Acceso gratuito a 1 consulta diaria basada en el corpus legal oficial."
@@ -76,7 +76,7 @@ async def health_check():
     return {
         "status": "ok",
         "version": "1.0.0",
-        "agente": "LexJal",
+        "agente": "Civilis",
         "entorno": settings.environment,
     }
 

@@ -1,5 +1,5 @@
 """
-LexJal — Rate limiter
+Civilis — Rate limiter
 Controla el límite de 1 consulta gratuita por día.
 Usa Redis para persistir contadores entre reinicios.
 """
@@ -17,7 +17,7 @@ settings = get_settings()
 class RateLimiter:
     """
     Rate limiter basado en Redis.
-    Clave: lexjal:rl:{user_key}:{fecha}
+    Clave: civilis:rl:{user_key}:{fecha}
     El contador expira automáticamente a medianoche siguiente.
     """
 
@@ -36,7 +36,7 @@ class RateLimiter:
     def _make_key(self, user_key: str) -> str:
         """Genera la clave Redis para el día actual."""
         today = datetime.utcnow().strftime("%Y-%m-%d")
-        return f"lexjal:rl:{user_key}:{today}"
+        return f"civilis:rl:{user_key}:{today}"
 
     def _seconds_until_midnight(self) -> int:
         """Segundos restantes hasta medianoche UTC."""

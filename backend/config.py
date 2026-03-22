@@ -1,5 +1,5 @@
 """
-LexJal — Configuración central
+Civilis — Configuración central
 Carga variables de entorno y expone settings tipados.
 """
 from functools import lru_cache

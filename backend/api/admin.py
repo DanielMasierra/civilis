@@ -1,5 +1,5 @@
 """
-LexJal — Router de administración
+Civilis — Router de administración
 Endpoints para gestión del corpus legal y estadísticas del sistema.
 Protegidos por API key de administrador.
 """

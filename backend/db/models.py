@@ -1,5 +1,5 @@
 """
-LexJal — Modelos de base de datos
+Civilis — Modelos de base de datos
 Define las tablas: usuarios, consultas y suscripciones.
 """
 import uuid

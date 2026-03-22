@@ -1,5 +1,5 @@
 """
-LexJal — Servidor MCP (Model Context Protocol)
+Civilis — Servidor MCP (Model Context Protocol)
 Expone el agente jurídico como herramienta MCP para conectarlo con:
   - Claude.ai (claude.ai/settings/integrations)
   - ChatGPT (a través de OpenAPI spec)
@@ -31,12 +31,12 @@ from backend.middleware.rate_limiter import get_rate_limiter
 settings = get_settings()
 
 # Inicializar servidor MCP
-server = Server("lexjal")
+server = Server("civilis")
 
 
 @server.list_tools()
 async def handle_list_tools() -> list[types.Tool]:
-    """Define las herramientas disponibles en LexJal MCP."""
+    """Define las herramientas disponibles en Civilis MCP."""
     return [
         types.Tool(
             name="consulta_juridica_civil",
@@ -109,7 +109,7 @@ async def handle_call_tool(
                     text=(
                         "⚠️ Has agotado tu consulta gratuita del día.\n\n"
                         "Tu acceso se renovará mañana. Para consultas ilimitadas, "
-                        "visita lexjal.com y conoce nuestros planes."
+                        "visita civilis.com y conoce nuestros planes."
                     ),
                 )
             ]
@@ -136,7 +136,7 @@ async def handle_call_tool(
             if restantes == 0:
                 respuesta += (
                     "\n\n---\n💡 Has usado tu consulta gratuita del día. "
-                    "Vuelve mañana o visita lexjal.com para acceso ilimitado."
+                    "Vuelve mañana o visita civilis.com para acceso ilimitado."
                 )
 
             return [types.TextContent(type="text", text=respuesta)]
@@ -160,7 +160,7 @@ async def handle_call_tool(
         restantes = await limiter.consultas_restantes(user_key)
 
         estado = (
-            f"📊 **Estado de consultas LexJal**\n"
+            f"📊 **Estado de consultas Civilis**\n"
             f"• Realizadas hoy: {realizadas}\n"
             f"• Consultas restantes: {restantes}\n"
             f"• Límite diario (plan gratuito): {settings.free_daily_limit}\n"
@@ -183,7 +183,7 @@ async def main():
             read_stream,
             write_stream,
             InitializationOptions(
-                server_name="lexjal",
+                server_name="civilis",
                 server_version="1.0.0",
                 capabilities=server.get_capabilities(
                     notification_options=NotificationOptions(),

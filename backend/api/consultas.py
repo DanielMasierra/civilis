@@ -1,5 +1,5 @@
 """
-LexJal — Router de consultas
+Civilis — Router de consultas
 Endpoints para interactuar con el agente jurídico.
 """
 import json

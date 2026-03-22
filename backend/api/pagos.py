@@ -1,5 +1,5 @@
 """
-LexJal — Integración de pagos Stripe (Fase 3)
+Civilis — Integración de pagos Stripe (Fase 3)
 Maneja suscripciones, pagos únicos y webhooks de Stripe.
 
 Planes:
@@ -30,14 +30,14 @@ router = APIRouter(prefix="/pagos", tags=["pagos"])
 # ── Configuración de planes ────────────────────────────────────────────────────
 PLANES = {
     "basico": {
-        "nombre": "LexJal Básico",
+        "nombre": "Civilis Básico",
         "monto_mxn": 9900,       # En centavos: MXN 99.00
         "consultas_dia": 30,
         "descripcion": "30 consultas jurídicas al día",
         "stripe_price_id": "",   # Crear en Stripe Dashboard y pegar aquí
     },
     "profesional": {
-        "nombre": "LexJal Profesional",
+        "nombre": "Civilis Profesional",
         "monto_mxn": 29900,      # MXN 299.00
         "consultas_dia": -1,     # -1 = ilimitado
         "descripcion": "Consultas ilimitadas + prioridad de respuesta",
@@ -84,7 +84,7 @@ async def crear_pago_intent(
     intent_params = {
         "amount": plan["monto_mxn"],
         "currency": "mxn",
-        "description": f"LexJal — {plan['nombre']}",
+        "description": f"Civilis — {plan['nombre']}",
         "metadata": {
             "plan": body.plan,
             "user_id": str(user_id) if user_id else "anonymous",

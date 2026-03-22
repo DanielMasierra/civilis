@@ -1,5 +1,5 @@
 """
-LexJal — Conexión a base de datos
+Civilis — Conexión a base de datos
 Sesiones asíncronas con SQLAlchemy 2.0.
 """
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker

@@ -1,5 +1,5 @@
 """
-LexJal — Webhook de WhatsApp (Fase 2)
+Civilis — Webhook de WhatsApp (Fase 2)
 Integración con Meta Business API para recibir y responder mensajes de WhatsApp.
 
 Activación: descomentar en main.py cuando se inicie la fase 2.
@@ -53,7 +53,7 @@ async def verify_webhook(request: Request):
 @router.post("/webhook")
 async def receive_message(request: Request):
     """
-    Recibe mensajes entrantes de WhatsApp y responde con el agente LexJal.
+    Recibe mensajes entrantes de WhatsApp y responde con el agente Civilis.
     Meta envía eventos POST con los mensajes de los usuarios.
     """
     # Verificar firma de Meta (seguridad)
@@ -134,7 +134,7 @@ async def _process_whatsapp_message(message: dict, value: dict):
         if restantes == 0:
             respuesta += (
                 "\n\n⚠️ Esta fue tu consulta gratuita del día. "
-                "Vuelve mañana o visita lexjal.com para acceso ilimitado."
+                "Vuelve mañana o visita civilis.com para acceso ilimitado."
             )
 
         await _send_whatsapp_message(phone, respuesta)

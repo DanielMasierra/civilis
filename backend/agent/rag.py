@@ -1,5 +1,5 @@
 """
-LexJal — RAG Pipeline
+Civilis — RAG Pipeline
 Carga documentos legales en ChromaDB y recupera los más relevantes
 para cada consulta. Usa embeddings locales (sentence-transformers) para
 evitar costos adicionales de API de embeddings.
@@ -14,8 +14,8 @@ from chromadb.config import Settings as ChromaSettings
 from langchain_chroma import Chroma
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.document_loaders import PyPDFLoader, DirectoryLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.schema import Document
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_core.documents import Document
 
 from backend.config import get_settings
 

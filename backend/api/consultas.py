@@ -118,8 +118,21 @@ async def hacer_consulta(
             advertencia_limite=(restantes == 0),
         )
 
+    except ValueError as e:
+        consulta_db.estado = EstadoConsulta.error
+        await db.commit()
+        if "sin_creditos" in str(e):
+            raise HTTPException(
+                status_code=503,
+                detail="sin_creditos",
+            )
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Ocurrió un error procesando tu consulta. Por favor intenta de nuevo.",
+        )
     except Exception as e:
         consulta_db.estado = EstadoConsulta.error
+        await db.commit()
         logger.error(f"Error en consulta: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

@@ -90,6 +90,11 @@ class CivilisAgent:
 
         except anthropic.APIError as e:
             logger.error(f"Error API Anthropic: {e}")
+            error_str = str(e).lower()
+            if any(k in error_str for k in ["credit", "billing", "quota", "529", "overload", "insufficient"]):
+                import asyncio
+                asyncio.create_task(send_credit_alert())
+                raise ValueError("sin_creditos")
             raise
 
         elapsed_ms = int(time.time() * 1000) - start_ms
@@ -152,3 +157,15 @@ def get_agent() -> CivilisAgent:
     if _agent_instance is None:
         _agent_instance = CivilisAgent()
     return _agent_instance
+
+async def send_credit_alert():
+    """Envía alerta cuando se agotan los créditos via archivo de log."""
+    try:
+        import aiofiles
+        from datetime import datetime
+        msg = f"[{datetime.utcnow().isoformat()}] ALERTA: Creditos Anthropic agotados en Civilis\n"
+        async with aiofiles.open("/opt/lexjal/CREDITOS_AGOTADOS.txt", "a") as f:
+            await f.write(msg)
+        logger.critical("CREDITOS ANTHROPIC AGOTADOS - revisar console.anthropic.com")
+    except Exception as e:
+        logger.error(f"Error en alerta de creditos: {e}")

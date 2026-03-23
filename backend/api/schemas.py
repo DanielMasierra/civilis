@@ -23,6 +23,10 @@ class ConsultaRequest(BaseModel):
         default=None,
         description="Historial de mensajes para conversaciones continuas",
     )
+    usuario_id: Optional[str] = Field(
+        default=None,
+        description="Email o identificador del usuario",
+    )
     canal: str = Field(
         default="web",
         description="Canal de origen: web | mcp | whatsapp",

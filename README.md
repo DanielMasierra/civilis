@@ -20,11 +20,11 @@ jurídica civil gratuita** a cualquier persona en Jalisco. Combina:
 
 - **RAG (Retrieval-Augmented Generation)**: recupera artículos de la normativa 
   oficial antes de responder, eliminando alucinaciones.
-- **Claude Sonnet**: genera respuestas claras y sin jerga legal innecesaria.
+- **Claude Sonnet**: genera respuestas claras, en lenguaje ciudadano, sin jerga legal.
 - **Corpus legal oficial**: Código Civil de Jalisco, Código Civil Federal, 
   Código de Procedimientos Civiles, Ley del Registro Civil, Ley del Notariado, 
   Ley de Justicia Alternativa y Ley de Protección al Consumidor.
-- **Rate limiting**: 1 consulta gratuita al día por usuario/IP.
+- **Rate limiting**: 2 consultas gratuitas por día por usuario.
 
 ### Áreas cubiertas
 
@@ -108,6 +108,7 @@ Variables mínimas requeridas:
 ANTHROPIC_API_KEY=sk-ant-...
 POSTGRES_PASSWORD=tu_clave_segura
 SECRET_KEY=clave_secreta_larga
+FREE_DAILY_LIMIT=2
 ```
 
 ### 3. Agregar documentos legales
@@ -168,8 +169,8 @@ curl -X POST http://localhost:8082/consulta/ \
   ],
   "tokens_usados": 3241,
   "tiempo_ms": 10676,
-  "consultas_restantes": 0,
-  "advertencia_limite": true
+  "consultas_restantes": 1,
+  "advertencia_limite": false
 }
 ```
 
@@ -191,8 +192,9 @@ curl -X POST http://localhost:8082/consulta/ \
 1. **RAG obligatorio**: solo responde con base en el contexto recuperado.
 2. **System prompt restrictivo**: instrucciones explícitas de no inventar artículos.
 3. **Temperatura baja** (`0.1`): respuestas deterministas.
-4. **Citación obligatoria**: siempre cita el artículo y la ley.
-5. **Fallback honesto**: si no hay contexto relevante, lo dice y dirige a instituciones reales.
+4. **Citación obligatoria**: siempre cita el artículo y la ley en negrita.
+5. **Lenguaje ciudadano**: respuestas claras, sin jerga jurídica, con formato markdown legible.
+6. **Fallback honesto**: si no hay contexto relevante, lo dice y dirige a instituciones reales.
 
 ---
 
@@ -201,7 +203,7 @@ curl -X POST http://localhost:8082/consulta/ \
 - **Servidor**: Hetzner CCX13 — 2 vCPU dedicados, 8GB RAM
 - **OS**: Ubuntu 24.04
 - **Puerto**: 8082 (interno), expuesto vía Nginx
-- **Dominio**: civilis.iusbot.online (SSL via Certbot)
+- **Dominio**: civilis.iusbot.online (SSL via Certbot, expira 2026-06-20)
 - **Embeddings**: paraphrase-multilingual-mpnet-base-v2 (CPU, local)
 - **Coexiste con**: n8n (5678), tesisbot-mcp (3001)
 
@@ -213,7 +215,7 @@ civilis/
 ├── backend/
 │   ├── agent/
 │   │   ├── agent.py        # Agente principal (Claude + RAG)
-│   │   ├── prompts.py      # System prompts
+│   │   ├── prompts.py      # System prompts y mensajes
 │   │   └── rag.py          # Pipeline RAG (ChromaDB)
 │   ├── api/
 │   │   ├── consultas.py    # Router principal
@@ -279,8 +281,8 @@ pero **no sustituye la asesoría de una persona especialista en derecho**.
 Para casos específicos:
 
 - **Procuraduría Social del Estado de Jalisco**: +52 33 3030 2900
-- **Defensoría Pública de Jalisco**: Av. Federalismo Norte 110
-- **Instituto Jalisciense de Asistencia Jurídica**: ijaj.jalisco.gob.mx
+- **Defensoría Pública de Jalisco**: Periférico Poniente 7247, Zapopan (Ciudad Judicial)
+- **Defensoría Pública Federal**: Pino Suárez 527, Col. Centro, Guadalajara | Tel: 33 3658 4930
 
 ---
 
